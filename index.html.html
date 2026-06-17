@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laura Moreno — Project Delivery & Implementation</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#F5F0E8;--beige:#EDE5D4;--beige-dark:#D9CEBC;--green-dark:#2D4A35;--green-mid:#4A7C59;--green-light:#B8D4BE;--green-tint:#E8F2EA;--yellow:#E8C84A;--yellow-tint:#FDF6D8;--yellow-dark:#B8960A;--brown:#6B4C2A;--brown-light:#9A7755;--brown-tint:#F2EAE0;--white:#FFFFFF;--border:#D9CEBC;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--brown);line-height:1.6;}
+.layout{display:flex;min-height:100vh;}
+
+/* SIDEBAR */
+.sidebar{width:264px;min-width:264px;background:var(--green-dark);position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:100;display:flex;flex-direction:column;}
+.sb-brand{padding:26px 22px 18px;border-bottom:1px solid rgba(255,255,255,0.08);}
+.sb-initial{width:48px;height:48px;border-radius:50%;background:var(--yellow);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--green-dark);margin-bottom:10px;}
+.sb-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:800;color:white;line-height:1.2;margin-bottom:3px;}
+.sb-title{font-size:11px;color:var(--green-light);font-weight:600;line-height:1.4;margin-bottom:8px;}
+.sb-langs{display:flex;gap:5px;flex-wrap:wrap;}
+.lang-pill{background:rgba(232,200,74,0.15);border:1px solid rgba(232,200,74,0.25);border-radius:20px;padding:3px 9px;font-size:10px;font-weight:700;color:var(--yellow);letter-spacing:0.05em;}
+.nav-list{padding:10px 0;flex:1;}
+.nav-group{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.22);padding:12px 22px 4px;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 22px;cursor:pointer;border-left:3px solid transparent;transition:all 0.15s;text-decoration:none;}
+.nav-item:hover{background:rgba(255,255,255,0.05);}
+.nav-item.active{background:rgba(232,200,74,0.1);border-left-color:var(--yellow);}
+.nav-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.12);flex-shrink:0;transition:background 0.3s;}
+.nav-item.active .nav-dot{background:var(--yellow);}
+.nav-text{font-size:12px;font-weight:500;color:rgba(255,255,255,0.45);line-height:1.3;}
+.nav-item.active .nav-text{color:white;font-weight:600;}
+.sb-cta{margin:14px 22px;background:var(--yellow);border-radius:10px;padding:11px 16px;text-align:center;cursor:pointer;transition:all 0.2s;text-decoration:none;display:block;}
+.sb-cta:hover{background:#d4b43a;transform:translateY(-1px);}
+.sb-cta-text{font-family:'Playfair Display',serif;font-size:13px;font-weight:800;color:var(--green-dark);}
+.sb-cta-sub{font-size:10px;color:var(--green-dark);opacity:0.7;margin-top:1px;}
+.sb-foot{padding:14px 22px;border-top:1px solid rgba(255,255,255,0.07);font-size:10px;color:rgba(255,255,255,0.22);line-height:1.6;}
+
+/* CONTENT */
+.content{margin-left:264px;flex:1;}
+
+/* HERO */
+.hero{background:var(--green-tint);padding:60px 64px 56px;position:relative;overflow:hidden;border-bottom:2px solid var(--green-light);}
+.hero::before{content:'';position:absolute;right:-80px;top:-80px;width:360px;height:360px;border-radius:50%;background:var(--yellow);opacity:0.18;}
+.hero::after{content:'';position:absolute;right:200px;bottom:-50px;width:220px;height:220px;border-radius:50%;background:var(--green-light);opacity:0.5;}
+.hero-tag{display:inline-flex;align-items:center;gap:7px;background:var(--green-dark);border:1px solid var(--green-dark);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:700;color:var(--yellow);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:20px;}
+.hero h1{font-family:'Playfair Display',serif;font-size:46px;font-weight:900;color:var(--green-dark);line-height:1.05;margin-bottom:10px;letter-spacing:-0.03em;}
+.hero h1 em{color:var(--green-mid);font-style:normal;}
+.hero-tagline{font-size:15px;color:var(--green-mid);font-style:italic;margin-bottom:16px;font-weight:600;}
+.hero-sub{font-size:15px;color:var(--brown);max-width:600px;margin-bottom:28px;line-height:1.7;}
+.hero-stats{display:flex;gap:32px;flex-wrap:wrap;margin-bottom:28px;padding:22px 24px;background:white;border-radius:16px;border:1.5px solid var(--green-light);}
+.stat{text-align:left;}
+.stat-num{font-family:'Playfair Display',serif;font-size:34px;font-weight:900;color:var(--green-dark);line-height:1;}
+.stat-label{font-size:11px;color:var(--brown-light);font-weight:600;margin-top:3px;line-height:1.35;}
+.hero-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:0;}
+.hero-card{background:white;border-radius:16px;border:1.5px solid var(--green-light);padding:20px 18px;transition:transform 0.15s;}
+.hero-card:hover{transform:translateY(-2px);}
+.hc-stat{text-align:center;}
+.hero-card:hover{transform:translateY(-2px);}
+.hc-tags{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;}
+.hc-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.hc-tag{background:var(--green-tint);border:1px solid var(--green-light);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--green-dark);}
+.hc-tag-dark{background:var(--green-dark);color:white;border-color:var(--green-dark);}
+.hc-tag-dark{background:var(--green-dark);color:white;border-color:var(--green-dark);}
+.hc-icon{font-size:22px;margin-bottom:6px;}
+.hc-num{font-family:'Playfair Display',serif;font-size:26px;font-weight:900;color:var(--green-dark);line-height:1;margin-bottom:4px;}
+.hc-label{font-size:12px;font-weight:700;color:var(--green-dark);margin-bottom:4px;}
+.hc-sub{font-size:11px;color:var(--brown-light);line-height:1.45;}
+.hero-tools-row{background:white;border-radius:14px;border:1.5px solid var(--green-light);padding:14px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.ht-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--brown-light);white-space:nowrap;}
+.ht-pills{display:flex;gap:7px;flex-wrap:wrap;}
+.ht-pill{display:flex;align-items:center;gap:5px;background:var(--green-tint);border:1px solid var(--green-light);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:600;color:var(--green-dark);}
+.ht-icon{font-size:13px;}
+.chip{background:white;border:1.5px solid var(--green-light);border-radius:20px;padding:5px 13px;font-size:12px;color:var(--brown-light);font-weight:500;}
+.chip strong{color:var(--green-dark);}
+
+/* SECTIONS */
+.sections{padding:36px 64px 80px;}
+
+/* MODULE */
+.module{background:var(--white);border-radius:20px;border:1.5px solid var(--border);margin-bottom:22px;overflow:hidden;scroll-margin-top:20px;}
+.mod-header{display:flex;align-items:center;gap:14px;padding:19px 24px;border-bottom:1.5px solid var(--beige);cursor:pointer;user-select:none;transition:background 0.15s;}
+.mod-header:hover{background:#fafaf7;}
+.mod-num{width:33px;height:33px;border-radius:9px;background:var(--green-dark);color:white;font-family:'Playfair Display',serif;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.mod-meta{flex:1;}
+.mod-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:800;color:var(--green-dark);}
+.mod-sub{font-size:12px;color:var(--brown-light);margin-top:1px;}
+.mod-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;padding:4px 10px;border-radius:20px;white-space:nowrap;}
+.b-green{background:var(--green-tint);color:var(--green-dark);}
+.b-yellow{background:var(--yellow-tint);color:var(--yellow-dark);}
+.b-brown{background:var(--brown-tint);color:var(--brown);}
+.b-dark{background:var(--green-dark);color:var(--yellow);}
+.mod-chev{font-size:15px;color:var(--beige-dark);transition:transform 0.2s;}
+.module.open .mod-chev{transform:rotate(180deg);}
+.mod-body{display:none;padding:24px 24px 28px;}
+.module.open .mod-body{display:block;}
+
+/* COMPONENTS */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:14px;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px;margin-bottom:14px;}
+.card{background:var(--cream);border-radius:14px;padding:17px 19px;border:1px solid var(--border);}
+.card-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--brown-light);margin-bottom:4px;}
+.card-title{font-family:'Playfair Display',serif;font-size:14px;font-weight:800;color:var(--green-dark);margin-bottom:6px;}
+.card-body{font-size:13px;color:var(--brown-light);line-height:1.6;}
+.card-num{font-family:'Playfair Display',serif;font-size:30px;font-weight:900;color:var(--green-dark);margin-bottom:3px;}
+
+.alert{display:flex;gap:10px;border-radius:12px;padding:13px 16px;font-size:13px;line-height:1.6;margin-top:14px;}
+.alert-icon{font-size:15px;flex-shrink:0;margin-top:1px;}
+.al-green{background:var(--green-tint);color:var(--green-dark);}
+.al-yellow{background:var(--yellow-tint);color:var(--yellow-dark);}
+.al-brown{background:var(--brown-tint);color:var(--brown);}
+
+/* TIMELINE */
+.timeline{position:relative;padding-left:30px;}
+.timeline::before{content:'';position:absolute;left:10px;top:4px;bottom:0;width:2px;background:var(--beige-dark);}
+.tl-item{position:relative;padding-bottom:26px;}
+.tl-item:last-child{padding-bottom:0;}
+.tl-dot{position:absolute;left:-30px;top:4px;width:20px;height:20px;border-radius:50%;background:var(--green-dark);border:3px solid var(--cream);display:flex;align-items:center;justify-content:center;}
+.tl-dot.hl{background:var(--yellow);}
+.tl-dot-in{width:7px;height:7px;border-radius:50%;background:white;}
+.tl-dot.hl .tl-dot-in{background:var(--green-dark);}
+.tl-period{font-size:10px;font-weight:700;color:var(--brown-light);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:2px;}
+.tl-role{font-family:'Playfair Display',serif;font-size:15px;font-weight:800;color:var(--green-dark);margin-bottom:1px;}
+.tl-co{font-size:12px;color:var(--brown-light);font-weight:600;margin-bottom:6px;}
+.tl-body{font-size:13px;color:var(--brown-light);line-height:1.6;margin-bottom:8px;}
+.tl-note{font-size:12px;font-style:italic;color:var(--brown-light);margin-bottom:8px;padding:8px 12px;background:var(--beige);border-radius:8px;border-left:3px solid var(--yellow);}
+.tl-tags{display:flex;gap:6px;flex-wrap:wrap;}
+.tag{font-size:11px;font-weight:600;border-radius:8px;padding:3px 9px;}
+.tag-green{background:var(--green-tint);color:var(--green-dark);}
+.tag-yellow{background:var(--yellow-tint);color:var(--yellow-dark);}
+.tag-brown{background:var(--brown-tint);color:var(--brown);}
+
+/* STEPS */
+.step-list{list-style:none;}
+.step-item{display:flex;gap:13px;padding:13px 0;border-bottom:1px solid var(--beige);}
+.step-item:last-child{border-bottom:none;}
+.step-n{width:26px;height:26px;border-radius:50%;background:var(--beige);color:var(--green-dark);font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.step-body strong{display:block;font-weight:700;font-size:14px;color:var(--green-dark);margin-bottom:3px;}
+.step-body p{font-size:13px;color:var(--brown-light);line-height:1.6;}
+
+/* TOOL GRID */
+.tool-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:14px;}
+.tool-card{background:var(--cream);border-radius:12px;padding:14px;border:1px solid var(--border);text-align:center;}
+.tool-icon{font-size:20px;margin-bottom:5px;}
+.tool-name{font-family:'Playfair Display',serif;font-size:13px;font-weight:800;color:var(--green-dark);margin-bottom:2px;}
+.tool-use{font-size:11px;color:var(--brown-light);line-height:1.4;}
+
+/* SKILL BARS */
+.skill-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--beige);}
+.skill-row:last-child{border-bottom:none;}
+.skill-name{font-size:13px;font-weight:600;color:var(--green-dark);width:220px;flex-shrink:0;}
+.skill-bar-bg{flex:1;background:var(--beige);border-radius:20px;height:8px;overflow:hidden;}
+.skill-bar-fill{height:100%;background:var(--green-dark);border-radius:20px;width:0;transition:width 1.2s ease;}
+.skill-tag{font-size:10px;font-weight:700;color:var(--brown-light);width:65px;text-align:right;flex-shrink:0;}
+
+/* OUTCOME GRID */
+.outcome-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-bottom:16px;}
+.oc-card{background:var(--green-dark);border-radius:16px;padding:22px 18px;text-align:center;}
+.oc-num{font-family:'Playfair Display',serif;font-size:36px;font-weight:900;color:var(--yellow);line-height:1;margin-bottom:5px;}
+.oc-label{font-size:12px;font-weight:600;color:var(--green-light);line-height:1.4;}
+
+/* QUOTE BLOCK */
+.quote{border-left:4px solid var(--yellow);padding:14px 20px;background:var(--yellow-tint);border-radius:0 12px 12px 0;margin:16px 0;}
+.quote-text{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--green-dark);font-style:italic;line-height:1.5;}
+.quote-attr{font-size:12px;color:var(--brown-light);margin-top:6px;font-weight:600;}
+
+/* RECRUITER BOX */
+.rec-box{background:var(--green-dark);border-radius:14px;padding:18px 20px;margin-bottom:14px;}
+.rec-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--yellow);margin-bottom:6px;}
+.rec-text{font-size:13px;color:var(--green-light);line-height:1.6;}
+.rec-text strong{color:white;}
+
+/* GAP BOX */
+.gap-box{border:2px solid var(--yellow);border-radius:14px;padding:16px 20px;background:var(--yellow-tint);margin-top:14px;}
+.gap-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--yellow-dark);margin-bottom:6px;}
+.gap-text{font-size:13px;color:var(--brown);line-height:1.6;}
+
+/* CTA */
+.cta-block{background:var(--green-dark);border-radius:20px;padding:40px;text-align:center;}
+.cta-title{font-family:'Playfair Display',serif;font-size:30px;font-weight:900;color:white;margin-bottom:8px;letter-spacing:-0.02em;}
+.cta-title em{color:var(--yellow);font-style:normal;}
+.cta-sub{font-size:15px;color:var(--green-light);max-width:460px;margin:0 auto 26px;line-height:1.65;}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.btn-p{background:var(--yellow);color:var(--green-dark);border:none;border-radius:10px;padding:13px 28px;font-family:'Playfair Display',serif;font-weight:800;font-size:15px;cursor:pointer;transition:all 0.2s;text-decoration:none;display:inline-block;}
+.btn-p:hover{background:#d4b43a;transform:translateY(-2px);}
+.btn-s{background:transparent;color:white;border:1.5px solid rgba(255,255,255,0.3);border-radius:10px;padding:13px 28px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:14px;cursor:pointer;transition:all 0.2s;text-decoration:none;display:inline-block;}
+.btn-s:hover{border-color:white;background:rgba(255,255,255,0.06);}
+.contact-row{display:flex;gap:20px;justify-content:center;margin-top:20px;flex-wrap:wrap;}
+.ci{font-size:13px;color:var(--green-light);display:flex;align-items:center;gap:6px;}
+
+/* MONDAY GRID */
+.monday-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px;margin-bottom:14px;}
+.monday-card{border-radius:16px;padding:20px 18px;border:1.5px solid var(--border);}
+.mc-build{background:var(--green-tint);}
+.mc-auto{background:var(--yellow-tint);}
+.mc-connect{background:var(--brown-tint);}
+.mc-icon{font-size:22px;margin-bottom:6px;}
+.mc-title{font-family:'Playfair Display',serif;font-size:14px;font-weight:800;color:var(--green-dark);margin-bottom:10px;}
+.mc-items{list-style:none;}
+.mc-item{font-size:12px;color:var(--brown);padding:4px 0;border-bottom:1px solid rgba(0,0,0,0.06);line-height:1.4;}
+.mc-item:last-child{border-bottom:none;}
+/* AI GRID */
+.ai-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px;margin-bottom:8px;}
+.ai-cap{background:var(--cream);border-radius:14px;padding:18px 16px;border:1.5px solid var(--border);transition:border-color 0.15s,transform 0.15s;}
+.ai-cap:hover{border-color:var(--green-mid);transform:translateY(-2px);}
+.ai-cap-icon{font-size:22px;margin-bottom:7px;}
+.ai-cap-title{font-family:'Playfair Display',serif;font-size:14px;font-weight:800;color:var(--green-dark);margin-bottom:6px;}
+.ai-cap-body{font-size:12px;color:var(--brown-light);line-height:1.55;}
+/* BEFORE/AFTER CHART */
+.ba-chart{background:white;border-radius:16px;border:1.5px solid var(--border);padding:20px 22px;}
+.bac-row{margin-bottom:16px;}
+.bac-row:last-child{margin-bottom:0;}
+.bac-label{font-size:12px;font-weight:700;color:var(--green-dark);margin-bottom:7px;}
+.bac-bars{display:flex;flex-direction:column;gap:5px;}
+.bac-bar-wrap{display:flex;align-items:center;gap:8px;}
+.bac-bar{height:14px;border-radius:20px;transition:width 1.2s ease;min-width:4px;}
+.before-bar{background:var(--beige-dark);}
+.after-bar{background:var(--green-mid);}
+.bac-val{font-size:11px;font-weight:700;white-space:nowrap;}
+.before-val{color:var(--brown-light);}
+.after-val{color:var(--green-dark);}
+.bac-legend{display:flex;align-items:center;gap:6px;margin-top:12px;font-size:11px;color:var(--brown-light);}
+.bac-dot{width:10px;height:10px;border-radius:50%;display:inline-block;}
+.before-dot{background:var(--beige-dark);}
+.after-dot{background:var(--green-mid);}
+.sec-div{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--beige-dark);margin:24px 0 14px;display:flex;align-items:center;gap:10px;}
+.sec-div::after{content:'';flex:1;height:1px;background:var(--border);}
+
+.footer{background:var(--green-dark);padding:18px 64px;display:flex;justify-content:space-between;align-items:center;font-size:11px;color:rgba(255,255,255,0.28);}
+.footer strong{color:rgba(255,255,255,0.72);}
+
+@media(max-width:900px){
+  .sidebar{display:none;}.content{margin-left:0;}
+  .hero,.sections{padding:28px 22px;}
+  .two-col,.three-col,.tool-grid,.outcome-grid,.hero-cards,.monday-grid,.ai-grid{grid-template-columns:1fr 1fr;}
+  .hero h1{font-size:32px;}.hero-stats{gap:18px;}
+}
+@media(max-width:520px){
+  .two-col,.three-col,.tool-grid,.outcome-grid,.monday-grid,.ai-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-initial">L</div>
+    <div class="sb-name">Laura Moreno</div>
+    <div class="sb-title">Project Delivery & Implementation</div>
+    <div class="sb-langs">
+      <span class="lang-pill">🇬🇧 EN</span>
+      <span class="lang-pill">🇪🇸 ES</span>
+      <span class="lang-pill">📍 Dublin</span>
+    </div>
+  </div>
+  <div class="nav-list">
+    <div class="nav-group">Profile</div>
+    <a class="nav-item active" data-s="about" onclick="goTo('about')"><div class="nav-dot"></div><div class="nav-text">About Me</div></a>
+    <a class="nav-item" data-s="outcomes" onclick="goTo('outcomes')"><div class="nav-dot"></div><div class="nav-text">Key Outcomes</div></a>
+    <div class="nav-group">Experience</div>
+    <a class="nav-item" data-s="timeline" onclick="goTo('timeline')"><div class="nav-dot"></div><div class="nav-text">Career Timeline</div></a>
+    <a class="nav-item" data-s="onboarding" onclick="goTo('onboarding')"><div class="nav-dot"></div><div class="nav-text">Onboarding & Implementation</div></a>
+    <a class="nav-item" data-s="aiimpl" onclick="goTo('aiimpl')"><div class="nav-dot"></div><div class="nav-text">AI Implementation</div></a>
+    <a class="nav-item" data-s="qa" onclick="goTo('qa')"><div class="nav-dot"></div><div class="nav-text">QA & LLM Quality</div></a>
+    <div class="nav-group">Skills</div>
+    <a class="nav-item" data-s="tools" onclick="goTo('tools')"><div class="nav-dot"></div><div class="nav-text">Tools & Stack</div></a>
+    <a class="nav-item" data-s="monday" onclick="goTo('monday')"><div class="nav-dot"></div><div class="nav-text">Monday.com</div></a>
+    <a class="nav-item" data-s="ai" onclick="goTo('ai')"><div class="nav-dot"></div><div class="nav-text">AI & Claude</div></a>
+    <a class="nav-item" data-s="honest" onclick="goTo('honest')"><div class="nav-dot"></div><div class="nav-text">Salesforce</div></a>
+    <a class="nav-item" data-s="jira" onclick="goTo('jira')"><div class="nav-dot"></div><div class="nav-text">Jira & Confluence</div></a>
+    <div class="nav-group">Let's Connect</div>
+    <a class="nav-item" data-s="contact" onclick="goTo('contact')"><div class="nav-dot"></div><div class="nav-text">Contact Me</div></a>
+  </div>
+  <a class="sb-cta" href="mailto:Laura.moreno.limon@gmail.com">
+    <div class="sb-cta-text">📩 Contact Me</div>
+    <div class="sb-cta-sub">Laura.moreno.limon@gmail.com</div>
+  </a>
+  <div class="sb-foot">Open to opportunities · Dublin, Ireland<br>HealthTech · SaaS · AI · Implementation</div>
+</nav>
+
+<!-- CONTENT -->
+<div class="content">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">🚀 Project Delivery & Implementation</div>
+  <h1>Laura <em>Moreno</em></h1>
+  <div class="hero-tagline">"Client success is the goal, delivery is the way, and growth is the measure."</div>
+  <p class="hero-sub">8+ years delivering implementations, managing quality, and coordinating projects across HealthTech, SaaS, AI, Gaming, and Healthcare Operations.</p>
+
+  <!-- THREE EQUAL CARDS -->
+  <div class="hero-cards">
+    <div class="hero-card hc-stat">
+      <div class="hc-icon">🗓</div>
+      <div class="hc-num">8+</div>
+      <div class="hc-label">Years experience</div>
+      <div class="hc-sub">🌍 English · Spanish<br>📍 Dublin · Open now</div>
+    </div>
+    <div class="hero-card hc-stat">
+      <div class="hc-icon">🏭</div>
+      <div class="hc-num">6+</div>
+      <div class="hc-label">Industries</div>
+      <div class="hc-sub">HealthTech · SaaS · AI<br>Gaming · Healthcare · Hospitality</div>
+    </div>
+    <div class="hero-card hc-stat">
+      <div class="hc-icon">🛠</div>
+      <div class="hc-label" style="margin-top:4px;">Tools</div>
+      <div class="hc-sub" style="margin-top:8px;">Monday.com · Claude AI · Salesforce<br>Jira · Confluence · Outlook</div>
+    </div>
+  </div>
+</div>
+
+<div class="sections">
+
+<!-- ABOUT -->
+<div class="module open" id="about">
+  <div class="mod-header" onclick="tog(this)">
+    <div class="mod-num">1</div>
+    <div class="mod-meta"><div class="mod-title">About Me</div><div class="mod-sub">Who I am, what I do, and what makes me different</div></div>
+    <span class="mod-badge b-green">Profile</span><span class="mod-chev">▾</span>
+  </div>
+  <div class="mod-body">
+    <div class="quote">
+      <div class="quote-text">"Client success is the goal, delivery is the way, and growth is the measure. Every role I've taken has been about deepening my ability to deliver, coordinate, and improve — regardless of the industry."</div>
+      
+    </div>
+    <div class="two-col" style="margin-top:16px;">
+      <div class="card">
+        <div class="card-label">What I do</div>
+        <div class="card-title">Implementation & Project Delivery</div>
+        <div class="card-body">I take complex rollouts — AI platforms, enterprise client onboardings, cross-team implementations — and make them happen. I manage the stakeholders, build the processes, and keep delivery on track from kick-off to sign-off.</div>
+      </div>
+      <div class="card">
+        <div class="card-label">What makes me different</div>
+        <div class="card-title">Technical enough to build the systems</div>
+        <div class="card-body">I don't just coordinate — I build. Automated workflows, AI-connected boards, interactive training tools, and onboarding hubs. I reduce the manual work so the team can focus on what actually matters.</div>
+      </div>
+      <div class="card">
+        <div class="card-label">QA background</div>
+        <div class="card-title">Quality-first thinking in everything</div>
+        <div class="card-body">4+ years in QA — including auditing LLM outputs at Telus and coordinating cross-platform releases at EA — gave me a mindset focused on risk, consistency, and process rigour. That follows me into every implementation I run.</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Client-facing</div>
+        <div class="card-title">I care about client success, not just delivery</div>
+        <div class="card-body">I take ownership of the client relationship from day one — understanding their goals, guiding them through the process, and making sure they walk away confident, supported, and set up to grow. A successful launch is just the starting point.</div>
+      </div>
+    </div>
+    <div class="alert al-green">
+      <span class="alert-icon">💡</span>
+      <div><strong>Note on this hub:</strong> I built this myself — using Claude, HTML, CSS, and JavaScript. It's not a template. It's a live example of how I work: I build tools that communicate clearly, reduce friction, and make an impression.</div>
+    </div>
+  </div>
+</div>
+
+<!-- KEY OUTCOMES -->
+<div class="module" id="outcomes">
+  <div class="mod-header" onclick="tog(this)">
+    <div class="mod-num">2</div>
+    <div class="mod-meta"><div class="mod-title">Key Outcomes</div><div class="mod-sub">Specific, measurable results across 8 years</div></div>
+    <span class="mod-badge b-yellow">Impact</span><span class="mod-chev">▾</span>
+  </div>
+  <div class="mod-body">
+    <div class="outcome-grid">
+      <div class="oc-card"><div class="oc-num">500+</div><div class="oc-label">Clients onboarded personally in under 12 months — SME to 10,000-employee enterprise</div></div>
+      <div class="oc-card"><div class="oc-num">83%</div><div class="oc-label">Reduction in onboarding admin time through workflow automation and AI integration</div></div>
+      <div class="oc-card"><div class="oc-card-body" style="display:none"></div><div class="oc-num">20–25%</div><div class="oc-label">Quality score improvement delivered across QA roles</div></div>
+      <div class="oc-card"><div class="oc-num">2,000+</div><div class="oc-label">Monthly healthcare interpretation requests managed — 50% of national volume, 2-person team</div></div>
+      <div class="oc-card"><div class="oc-num">15%</div><div class="oc-label">Backlog reduction at Oracle through escalation handling and workflow coordination</div></div>
+      <div class="oc-card"><div class="oc-num">4+</div><div class="oc-label">Years in QA — global audits, calibration, LLM output review, cross-platform release management</div></div>
+    </div>
+    <div class="alert al-yellow">
+      <span class="alert-icon">📊</span>
+      <div><strong>Across 5 industries.</strong> The sectors change. The pattern doesn't: identify the inefficiency, build a better process, measure the result. That's how I work everywhere I go.</div>
+    </div>
+  </div>
+</div>
+
+<!-- CAREER TIMELINE -->
+<div class="module" id="timeline">
+  <div class="mod-header" onclick="tog(this)">
+    <div class="mod-num">3</div>
+    <div class="mod-meta"><div class="mod-title">Career Timeline</div><div class="mod-sub">8+ years — HealthTech, AI, SaaS, Healthcare Operations, Gaming</div></div>
+    <span class="mod-badge b-green">Experience</span><span class="mod-chev">▾</span>
+  </div>
+  <div class="mod-body">
+    <div class="timeline">
+
+      <div class="tl-item">
+        <div class="tl-dot hl"><div class="tl-dot-in"></div></div>
+        <div class="tl-period">Aug 2025 – Present · Dublin, Ireland</div>
+        <div class="tl-role">Customer Onboarding & Implementation Executive</div>
+        <div class="tl-co">HealthTech SaaS Platform — Digital Health & Wellbeing</div>
+        <div class="tl-body">End-to-end onboarding and implementation for 500+ clients across Ireland and the UK — personally, solo, in under 12 months. SME to 10,000-employee enterprise. Coordinated company-wide AI implementation across Clinical, Legal, Compliance, Product, Marketing, and Customer Success. Built automated workflows reducing admin by 83%. Created an interactive onboarding hub deployed across multiple sites. Delivered demos, workshops, town halls, and enablement sessions to HR directors and CEOs.</div>
+        <div class="tl-note">Role context: covering a maternity leave — full ownership from day one.</div>
+        <div class="tl-tags"><span class="tag tag-green">500+ clients solo</span><span class="tag tag-green">AI implementation lead</span><span class="tag tag-yellow">Monday.com · Salesforce · Claude · Mailchimp</span></div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot"><div class="tl-dot-in"></div></div>
+        <div class="tl-period">Oct 2024 – May 2025 · Essen, Germany</div>
+        <div class="tl-role">Quality Data Analyst</div>
+        <div class="tl-co">Telus International — AI & Language Model Projects</div>
+        <div class="tl-body">Quality audits and calibration for AI and LLM datasets. Evaluated AI-generated outputs against a structured rubric covering accuracy, tone, bias, safety, and accountability — 30+ audits daily. Audited annotator performance. Updated annotation procedures to reduce operational bias. Delivered structured feedback to improve model consistency.</div>
+        <div class="tl-note">Role context: fixed-term project. Relocated to Germany for personal reasons.</div>
+        <div class="tl-tags"><span class="tag tag-green">LLM quality auditing</span><span class="tag tag-green">Bias & safety review</span><span class="tag tag-yellow">30+ audits/day</span></div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot"><div class="tl-dot-in"></div></div>
+        <div class="tl-period">Mar 2024 – Aug 2024 · Galway, Ireland</div>
+        <div class="tl-role">Project Manager</div>
+        <div class="tl-co">Context Ltd — Healthcare Interpretation Services (HSE)</div>
+        <div class="tl-body">Managed national interpretation service operations for Ireland's health system. Handled 50% of national volume in a 2-person team — 2,000+ monthly bookings. SLA management, escalation handling, interpreter allocation, and service continuity across healthcare organisations. Created service quotes and supported commercial coordination.</div>
+        <div class="tl-note">Role context: moved back from Germany, took this role on return.</div>
+        <div class="tl-tags"><span class="tag tag-brown">Healthcare PM</span><span class="tag tag-yellow">2,000+ monthly ops · National scale</span></div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot"><div class="tl-dot-in"></div></div>
+        <div class="tl-period">Aug 2023 – Mar 2024 · Galway, Ireland</div>
+        <div class="tl-role">Customer Support Analyst</div>
+        <div class="tl-co">Oracle — Hospitality SaaS (Opera Cloud)</div>
+        <div class="tl-body">Enterprise hospitality clients on Oracle's Opera Cloud platform. Reduced backlog queues by 15% through escalation handling and workflow coordination. Cross-functional collaboration to resolve technical client issues. Improved communication visibility through standardised reporting.</div>
+        <div class="tl-note">Role context: left when Context Ltd offered a step up into PM.</div>
+        <div class="tl-tags"><span class="tag tag-brown">Enterprise SaaS</span><span class="tag tag-yellow">15% backlog reduction</span></div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot"><div class="tl-dot-in"></div></div>
+        <div class="tl-period">Sep 2021 – Feb 2023 · Galway, Ireland</div>
+        <div class="tl-role">Associate Quality Designer</div>
+        <div class="tl-co">Electronic Arts — FIFA Cross-Play / Live Services</div>
+        <div class="tl-body">Cross-platform QA and release coordination for FIFA Cross-Play across multiple live service environments. Acted as point of contact between developers, designers, product owners, clients, and automation teams to deliver and support new feature launches. Managed testing execution, release coordination, and stakeholder communication in Agile. Delivered executive status updates and presentations to leadership. Risk tracking, retrospectives, and Jira/Confluence documentation.</div>
+        <div class="tl-tags"><span class="tag tag-green">Release PM · QA</span><span class="tag tag-green">Exec reporting</span><span class="tag tag-yellow">Jira · Confluence · Agile</span></div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot"><div class="tl-dot-in"></div></div>
+        <div class="tl-period">Jan 2019 – Sep 2021 · Galway, Ireland</div>
+        <div class="tl-role">Quality Assurance Analyst</div>
+        <div class="tl-co">Electronic Arts</div>
+        <div class="tl-body">Weekly quality evaluations across global sites, languages, and external partners. Monthly calibration sessions to align standards across teams. Mentored 2 team members. Onboarded new hires on QA procedures and scoring metrics. Delivered detailed performance metrics to leadership. Managed quality dispute resolution.</div>
+        <div class="tl-note">Role context: fixed-term contract, progressed internally before transition.</div>
+        <div class="tl-tags"><span class="tag tag-green">Global QA · Calibration</span><span class="tag tag-brown">Mentoring · Reporting</span></div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot"><div class="tl-dot-in"></div></div>
+        <div class="tl-period">2017 – 2018 · Madrid, Spain</div>
+        <div class="tl-role">Project Team Lead</div>
+        <div class="tl-co">Vector ITC — e-Learning</div>
+        <div class="tl-body">Coordinated and deployed an e-learning platform. Platform configuration, scheduling, and training materials. Weekly performance reports on results and attendance.</div>
+        <div class="tl-tags"><span class="tag tag-brown">e-Learning · PM</span></div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot"><div class="tl-dot-in"></div></div>
+        <div class="tl-period">2014 – 2015 · Madrid, Spain</div>
+        <div class="tl-role">Training & Development Coordinator</div>
+        <div class="tl-co">Deloitte</div>
+        <div class="tl-body">Planned and distributed training schedules and materials for a global professional services firm. End-to-end training logistics across in-office and off-site sessions.</div>
+        <div class="tl-tags"><span class="tag tag-brown">L&D · Deloitte</span></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ONBOARDING METHODOLOGY -->
+<div class="module" id="onboarding">
+  <div class="mod-header" onclick="tog(this)">
+    <div class="mod-num">4</div>
+    <div class="mod-meta"><div class="mod-title">Onboarding & Implementation</div><div class="mod-sub">500+ clients personally — SME to 10,000-employee enterprise</div></div>
+    <span class="mod-badge b-green">Methodology</span><span class="mod-chev">▾</span>
+  </div>
+  <div class="mod-body">
+    <div class="two-col" style="margin-bottom:16px;">
+      <div class="card">
+        <div class="card-label">Scale</div>
+        <div class="card-title">500+ clients, done personally</div>
+        <div class="card-body">Every client in under 12 months — SME, reseller, and enterprise accounts simultaneously. At peak, managing multiple active onboardings across different stages: intake, setup, enablement, launch, and handover — all running in parallel.</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Enterprise experience</div>
+        <div class="card-title">Up to 10,000 employees</div>
+        <div class="card-body">Largest client onboarded: ~10,000 employees. Delivered HR demonstrations, town halls, and end-user enablement sessions. Managed HR directors and C-suite stakeholders through the full implementation journey.</div>
+      </div>
+    </div>
+    <ul class="step-list">
+      <li class="step-item"><div class="step-n">1</div><div class="step-body"><strong>Structured intake — zero missing information</strong><p>Designed a conditional intake form in Monday.com that captures every required field based on client type. Auto-creates the board item. No email chains, no back-and-forth. Setup starts immediately.</p></div></li>
+      <li class="step-item"><div class="step-n">2</div><div class="step-body"><strong>Platform configuration</strong><p>Account creation, feature activation, branding, and admin access — configured in CMS and CRM using intake data. Consistent every time, regardless of client size.</p></div></li>
+      <li class="step-item"><div class="step-n">3</div><div class="step-body"><strong>Welcome comms — AI-generated, automatically delivered</strong><p>Client welcome pack generated by Claude from live board data — pre-filled, formatted, ready. Mailchimp handles timing. Zero manual copy-paste.</p></div></li>
+      <li class="step-item"><div class="step-n">4</div><div class="step-body"><strong>Enablement — demos, workshops, town halls</strong><p>10-minute intro or 45-minute full platform session — tailored to client size. Admin training, HR demonstrations, and end-user town halls designed to drive adoption and confidence from day one.</p></div></li>
+      <li class="step-item"><div class="step-n">5</div><div class="step-body"><strong>Launch + 2-week support window</strong><p>I remain primary contact post-launch. All queries via a structured request form — tracked on the board. Nothing lost in inboxes.</p></div></li>
+      <li class="step-item"><div class="step-n">6</div><div class="step-body"><strong>Structured handover</strong><p>Handover email auto-triggered. Feedback survey sent. Board closed. Account team has everything before I step back. No dependency on memory.</p></div></li>
+    </ul>
+    <div class="alert al-green">
+      <span class="alert-icon">📊</span>
+      <div><strong>The result:</strong> 83% reduction in admin time. The process runs itself. I focus on the client — not the admin.</div>
+    </div>
+  </div>
+</div>
+
+<!-- AI IMPLEMENTATION -->
+<div class="module" id="aiimpl">
+  <div class="mod-header" onclick="tog(this)">
+    <div class="mod-num">5</div>
+    <div class="mod-meta"><div class="mod-title">AI Implementation Project</div><div class="mod-sub">Company-wide AI tool rollout — stakeholders, cohorts, blockers, lessons</div></div>
+    <span class="mod-badge b-dark">AI Project</span><span class="mod-chev">▾</span>
+  </div>
+  <div class="mod-body">
+    <div class="rec-box">
+      <div class="rec-label">🎯 Recruiter note — why this matters</div>
+      <div class="rec-text">This is the project that shows <strong>real PM capability</strong> — stakeholder mapping from scratch, phased rollout design, dependency management, cross-functional coordination, and an honest account of what went wrong and how it was fixed. This is not theoretical project management.</div>
+    </div>
+    <div class="two-col" style="margin-top:16px;margin-bottom:16px;">
+      <div class="card">
+        <div class="card-label">The Project</div>
+        <div class="card-title">Company-wide AI clinical tool rollout</div>
+        <div class="card-body">Coordinated the implementation of an AI documentation tool for healthcare professionals — deployed across the business in phased cohorts. The tool auto-generates consultation notes during client calls, freeing clinicians to focus on the person rather than manual note-taking.</div>
+      </div>
+      <div class="card">
+        <div class="card-label">My Role</div>
+        <div class="card-title">Implementation Coordinator — end to end</div>
+        <div class="card-body">New to the company when this landed. I built the stakeholder map from scratch, gathered requirements from 6+ teams, wrote the SOP, designed the rollout plan with milestones and dependencies, coordinated cohort delivery, and wrote the test cases for UAT myself.</div>
+      </div>
+    </div>
+    <ul class="step-list">
+      <li class="step-item"><div class="step-n">1</div><div class="step-body"><strong>Stakeholder mapping — built from zero</strong><p>No existing map. I worked with my director to identify every stakeholder across Clinical, Legal, Compliance, Marketing, Product, Customer Success, and the external vendor — then met each team individually to surface all requirements before planning began.</p></div></li>
+      <li class="step-item"><div class="step-n">2</div><div class="step-body"><strong>Implementation plan with milestones and timelines</strong><p>Built backwards from the target date. Created a structured plan in Monday.com with milestones, dependencies, stakeholder responsibilities, and communication checkpoints. Organised stakeholder time, tracked actions, and kept all teams aligned throughout.</p></div></li>
+      <li class="step-item"><div class="step-n">3</div><div class="step-body"><strong>Phased cohort rollout</strong><p>Divided rollout by client type to manage risk and adoption — strategic direct accounts first, then insurance clients. Each cohort had its own communication plan, consent process, and activation checklist.</p></div></li>
+      <li class="step-item"><div class="step-n">4</div><div class="step-body"><strong>Blocker identified and resolved mid-delivery</strong><p>During the first cohort, a Development → Training dependency hadn't been surfaced early enough. Training materials couldn't be completed because technical setup was still pending. I escalated, restructured the sequencing, and made technical completion a gate for training prep in all subsequent phases. Following cohorts ran significantly smoother.</p></div></li>
+      <li class="step-item"><div class="step-n">5</div><div class="step-body"><strong>UAT — wrote the test cases myself</strong><p>Designed and executed UAT test cases for the AI tool. Defined what "working" looked like, documented pass/fail criteria, and coordinated sign-off with the development team. Product was signed off when my delivery criteria were met.</p></div></li>
+    </ul>
+    <div class="alert al-yellow">
+      <span class="alert-icon">💡</span>
+      <div><strong>Key learning applied:</strong> In multi-team implementations, the biggest risk isn't technical — it's the assumption that everyone else has done their part. I now build dependency verification and cross-team alignment calls into every phase before the next one opens.</div>
+    </div>
+  </div>
+</div>
+
+<!-- QA & LLM -->
+<div class="module" id="qa">
+  <div class="mod-header" onclick="tog(this)">
+    <div class="mod-num">6</div>
+    <div class="mod-meta"><div class="mod-title">QA & LLM Quality</div><div class="mod-sub">Auditing AI outputs, calibrating quality standards, and governing consistency at scale</div></div>
+    <span class="mod-badge b-brown">Quality</span><span class="mod-chev">▾</span>
+  </div>
+  <div class="mod-body">
+    <div class="two-col" style="margin-bottom:16px;">
+      <div class="card">
+        <div class="card-label">LLM Quality Auditing — Telus International</div>
+        <div class="card-title">30+ structured audits per day</div>
+        <div class="card-body">Evaluated AI-generated outputs against a structured rubric: <strong>accuracy</strong> (is the information real, not hallucinated), <strong>tone</strong>, <strong>bias</strong>, <strong>safety</strong> (not dangerous or harmful), and <strong>accountability</strong> (is the reasoning sound). Audited both model outputs and annotator performance. Fed findings back to improve model behaviour and reduce bias.</div>
+      </div>
+      <div class="card">
+        <div class="card-label">AI Scribe — SOP & Quality Framework</div>
+        <div class="card-title">Built the quality process from scratch</div>
+        <div class="card-body">Created a full SOP for the AI Scribe implementation — unifying steps, setting team responsibilities, defining SLAs, and establishing quality criteria. Wrote UAT test cases myself and coordinated sign-off with the development team. This is the foundation of a quality framework, formalised in practice.</div>
+      </div>
+      <div class="card">
+        <div class="card-label">QA at Scale — Electronic Arts (4+ years)</div>
+        <div class="card-title">Global audits, calibration, release QA</div>
+        <div class="card-body">Weekly quality evaluations across global sites, languages, and external partners. Monthly calibration sessions. Cross-platform release QA for live gaming products in Agile environments. Executive reporting and retrospectives. Mentored 2 team members. Managed quality dispute resolution.</div>
+      </div>
+      <div class="card">
+        <div class="card-label">What QA gives me</div>
+        <div class="card-title">A quality-first mindset in every delivery</div>
+        <div class="card-body">I think about risk before it materialises, document processes so others can follow them, and measure outcomes consistently. That rigour applies to every implementation, onboarding, and project I run — not just formal QA roles.</div>
+      </div>
+    </div>
+    <div class="alert al-brown">
+      <span class="alert-icon">🎓</span>
+      <div><strong>Certifications & education:</strong> CAPM in progress (PMI) · White Belt Six Sigma (2023) · Business Data Analytics, Galway Business School (2021) · Training Delivery & Evaluation (2019) · BA Business Administration & Finance</div>
+    </div>
+  </div>
+</div>
+
+<!-- TOOLS -->
+<div class="module" id="tools">
+  <div class="mod-header" onclick="tog(this)">
+    <div class="mod-num">7</div>
+    <div class="mod-meta"><div class="mod-title">Tools & Stack</div><div class="mod-sub">What I use, what I build, what I connect</div></div>
+    <span class="mod-badge b-yellow">Stack</span><span class="mod-chev">▾</span>
+  </div>
+  <div class="mod-body">
+    <div class="tool-grid" style="margin-bottom:18px;">
+      <div class="tool-card"><div class="tool-icon">🗂</div><div class="tool-name">Monday.com</div><div class="tool-use">Boards, automations, forms, dashboards, AI integration</div></div>
+      <div class="tool-card"><div class="tool-icon">🤖</div><div class="tool-name">Claude (AI)</div><div class="tool-use">Projects, skills, workflows, tool connections</div></div>
+      <div class="tool-card"><div class="tool-icon">💼</div><div class="tool-name">Salesforce</div><div class="tool-use">CRM, account setup, contract data, reporting</div></div>
+      <div class="tool-card"><div class="tool-icon">🐛</div><div class="tool-name">Jira & Confluence</div><div class="tool-use">Agile delivery, release management, documentation</div></div>
+      <div class="tool-card"><div class="tool-icon">📧</div><div class="tool-name">Outlook</div><div class="tool-use">Automated triggers, client comms, inbox management</div></div>
+      <div class="tool-card"><div class="tool-icon">🎬</div><div class="tool-name">Camtasia</div><div class="tool-use">Screen recording, training videos, product walkthroughs</div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MONDAY.COM -->
+<div class="module" id="monday">
+  <div class="mod-header" onclick="tog(this)">
+    <div class="mod-num">8</div>
+    <div class="mod-meta"><div class="mod-title">Monday.com</div><div class="mod-sub">What I build, automate, and connect — in production every day</div></div>
+    <span class="mod-badge b-green">Monday.com</span><span class="mod-chev">▾</span>
+  </div>
+  <div class="mod-body">
+    <div class="monday-grid">
+      <div class="monday-card mc-build">
+        <div class="mc-icon">🏗</div>
+        <div class="mc-title">Build</div>
+        <div class="mc-items">
+          <div class="mc-item">Client onboarding pipeline</div>
+          <div class="mc-item">RAID log boards</div>
+          <div class="mc-item">Partner / reseller intake boards</div>
+          <div class="mc-item">AI implementation delivery board</div>
+          <div class="mc-item">Cross-functional project tracking</div>
+        </div>
+      </div>
+      <div class="monday-card mc-auto">
+        <div class="mc-icon">⚡</div>
+        <div class="mc-title">Automate</div>
+        <div class="mc-items">
+          <div class="mc-item">Form submit → item created + owner assigned</div>
+          <div class="mc-item">Status change → email notification triggered</div>
+          <div class="mc-item">Launch date - 5 days → team reminder sent</div>
+          <div class="mc-item">Deal value threshold → senior stakeholder flagged</div>
+          <div class="mc-item">Handover date → feedback survey sent</div>
+        </div>
+      </div>
+      <div class="monday-card mc-connect">
+        <div class="mc-icon">🔗</div>
+        <div class="mc-title">Connect</div>
+        <div class="mc-items">
+          <div class="mc-item">↔ Claude — board read/write via AI</div>
+          <div class="mc-item">↔ Salesforce — CRM sync</div>
+          <div class="mc-item">↔ Outlook — automated email sends</div>
+          <div class="mc-item">↔ Mailchimp — onboarding sequences</div>
+        </div>
+      </div>
+    </div>
+    <div class="alert al-green" style="margin-top:16px;">
+      <span class="alert-icon">🤖</span>
+      <div><strong>AI-connected in production:</strong> Claude reads live Monday.com board data to generate reports, onboarding packs, and RAID items — and writes results back to the board directly. This runs every week, not as a demo.</div>
+    </div>
+  </div>
+</div>
+
+<!-- AI & CLAUDE -->
+<div class="module" id="ai">
+  <div class="mod-header" onclick="tog(this)">
+    <div class="mod-num">9</div>
+    <div class="mod-meta"><div class="mod-title">AI & Claude</div><div class="mod-sub">How I use AI as a real work system — not a chatbot</div></div>
+    <span class="mod-badge b-dark">AI-Powered</span><span class="mod-chev">▾</span>
+  </div>
+  <div class="mod-body">
+
+    <!-- 6 CAPABILITY CARDS -->
+    <div class="ai-grid">
+      <div class="ai-cap">
+        <div class="ai-cap-icon">📁</div>
+        <div class="ai-cap-title">Claude Projects</div>
+        <div class="ai-cap-body">I build Claude Projects loaded with role context, process documentation, brand guidelines, and client knowledge. Claude knows my role, my tools, and how things should be done — no re-explaining every session.</div>
+      </div>
+      <div class="ai-cap">
+        <div class="ai-cap-icon">⚙️</div>
+        <div class="ai-cap-title">Repeatable Skills</div>
+        <div class="ai-cap-body">I've built a library of Claude skills — structured automations that execute complex tasks end to end. Meeting → RAID log, data reconciliation, onboarding pack generation, weekly reports. Build once, run every week.</div>
+      </div>
+      <div class="ai-cap">
+        <div class="ai-cap-icon">🗂</div>
+        <div class="ai-cap-title">Monday.com Integration</div>
+        <div class="ai-cap-body">Claude reads and writes to Monday.com live. It pulls board data, creates items, updates statuses, and writes formatted outputs directly back — no copy-paste, no switching tools. This is live in production.</div>
+      </div>
+      <div class="ai-cap">
+        <div class="ai-cap-icon">🔗</div>
+        <div class="ai-cap-title">Software Connections</div>
+        <div class="ai-cap-body">Claude connected to Outlook, Salesforce, Monday.com, Mailchimp, and Atlassian tools. When a status changes or a task completes, connected systems update automatically — AI sits at the centre of the workflow.</div>
+      </div>
+      <div class="ai-cap">
+        <div class="ai-cap-icon">🛠</div>
+        <div class="ai-cap-title">Artifacts & Tools</div>
+        <div class="ai-cap-body">I use Claude to build functional interactive tools — training hubs with quizzes and progress trackers, process guides, and this portfolio itself. Each is a self-contained file, shareable instantly, built in a single session.</div>
+      </div>
+      <div class="ai-cap">
+        <div class="ai-cap-icon">🤝</div>
+        <div class="ai-cap-title">Daily Work Assistant</div>
+        <div class="ai-cap-body">Claude is part of my daily workflow — drafting communications, structuring meeting outputs, summarising data, generating status reports. Not occasional use. A configured colleague that knows the context.</div>
+      </div>
+    </div>
+
+    <!-- BEFORE/AFTER INTERACTIVE CHART -->
+    <div style="margin-top:20px;margin-bottom:8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--brown-light);">Automation impact — before vs after</div>
+    <div class="ba-chart" id="baChart">
+      <div class="bac-row" data-before="60" data-after="5" data-task="Weekly data reconciliation">
+        <div class="bac-label">Weekly data reconciliation</div>
+        <div class="bac-bars">
+          <div class="bac-bar-wrap"><div class="bac-bar before-bar" style="width:0%"></div><span class="bac-val before-val">60 min</span></div>
+          <div class="bac-bar-wrap"><div class="bac-bar after-bar" style="width:0%"></div><span class="bac-val after-val">5 min</span></div>
+        </div>
+      </div>
+      <div class="bac-row" data-before="45" data-after="5" data-task="Meeting → RAID log">
+        <div class="bac-label">Meeting → RAID log</div>
+        <div class="bac-bars">
+          <div class="bac-bar-wrap"><div class="bac-bar before-bar" style="width:0%"></div><span class="bac-val before-val">45 min</span></div>
+          <div class="bac-bar-wrap"><div class="bac-bar after-bar" style="width:0%"></div><span class="bac-val after-val">5 min</span></div>
+        </div>
+      </div>
+      <div class="bac-row" data-before="30" data-after="2" data-task="RAID board creation">
+        <div class="bac-label">RAID board creation</div>
+        <div class="bac-bars">
+          <div class="bac-bar-wrap"><div class="bac-bar before-bar" style="width:0%"></div><span class="bac-val before-val">30 min</span></div>
+          <div class="bac-bar-wrap"><div class="bac-bar after-bar" style="width:0%"></div><span class="bac-val after-val">2 min</span></div>
+        </div>
+      </div>
+      <div class="bac-row" data-before="20" data-after="2" data-task="Onboarding pack generation">
+        <div class="bac-label">Onboarding pack generation</div>
+        <div class="bac-bars">
+          <div class="bac-bar-wrap"><div class="bac-bar before-bar" style="width:0%"></div><span class="bac-val before-val">20 min</span></div>
+          <div class="bac-bar-wrap"><div class="bac-bar after-bar" style="width:0%"></div><span class="bac-val after-val">2 min</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="bac-legend"><span class="bac-dot before-dot"></span>Before &nbsp;&nbsp;<span class="bac-dot after-dot"></span>After automation</div>
+
+  </div>
+</div>
+
+<!-- SALESFORCE -->
+<div class="module" id="honest">
+  <div class="mod-header" onclick="tog(this)">
+    <div class="mod-num">10</div>
+    <div class="mod-meta"><div class="mod-title">Salesforce</div><div class="mod-sub">CRM management, client tracking, onboarding reporting</div></div>
+    <span class="mod-badge b-yellow">CRM</span><span class="mod-chev">▾</span>
+  </div>
+  <div class="mod-body">
+    <div class="three-col" style="margin-bottom:14px;">
+      <div class="card">
+        <div class="card-label">Client Tracking</div>
+        <div class="card-title">Full account visibility</div>
+        <div class="card-body">I create and manage client accounts in Salesforce from the moment a contract is signed — recording contract dates, product details, headcounts, and key contacts so every team has accurate, up-to-date information throughout the lifecycle.</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Reporting</div>
+        <div class="card-title">Onboarding & pipeline reports</div>
+        <div class="card-body">I build and run reports in Salesforce to track onboarding progress, monitor account status, and support invoicing with accurate headcount data. Used by Account Managers and senior stakeholders for monthly reviews.</div>
+      </div>
+      <div class="card">
+        <div class="card-label">CRM Hygiene</div>
+        <div class="card-title">Keeping data clean and connected</div>
+        <div class="card-body">I update Salesforce in sync with Monday.com and the client platform — so contract details, launch dates, and account configurations are consistent across all systems. No data silos, no manual reconciliation.</div>
+      </div>
+    </div>
+    <div class="alert al-yellow">
+      <span class="alert-icon">🔗</span>
+      <div><strong>Connected workflow:</strong> Salesforce links directly to Monday.com intake forms — client data entered once flows through automatically, reducing errors and keeping the CRM current without double entry.</div>
+    </div>
+  </div>
+</div>
+
+<!-- JIRA & CONFLUENCE -->
+<div class="module" id="jira">
+  <div class="mod-header" onclick="tog(this)">
+    <div class="mod-num">11</div>
+    <div class="mod-meta"><div class="mod-title">Jira & Confluence</div><div class="mod-sub">Test tracking, delivery coordination, and process documentation</div></div>
+    <span class="mod-badge b-brown">Atlassian</span><span class="mod-chev">▾</span>
+  </div>
+  <div class="mod-body">
+    <div class="two-col" style="margin-bottom:14px;">
+      <div class="card">
+        <div class="card-label">Jira — Test & Delivery Tracking</div>
+        <div class="card-title">End-to-end testing coordination</div>
+        <div class="card-body">I use Jira to track all testing activities — creating and managing test cases, logging bugs, monitoring fix progress, and coordinating with development teams to ensure sign-off criteria are met before go-live. Used extensively during the AI Scribe implementation and cross-platform QA at Electronic Arts.</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Confluence — Process Documentation</div>
+        <div class="card-title">Building knowledge that scales</div>
+        <div class="card-body">I use Confluence to create and maintain process documentation — SOPs, onboarding guides, testing procedures, and team wikis. The goal is always the same: documented processes that anyone can follow without needing to ask me. Built and maintained at EA across 4+ years of QA operations.</div>
+      </div>
+    </div>
+    <div class="alert al-brown">
+      <span class="alert-icon">📋</span>
+      <div><strong>In practice:</strong> Jira tracks what needs to be done and whether it's done correctly. Confluence captures how it's done so the next person doesn't start from scratch. Together they're how I keep quality and knowledge from living in one person's head.</div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT -->
+<div class="module" id="contact">
+  <div class="mod-header" onclick="tog(this)">
+    <div class="mod-num">11</div>
+    <div class="mod-meta"><div class="mod-title">Let's Talk</div><div class="mod-sub">Open to PM, Onboarding, Implementation, Service Delivery, and QA roles</div></div>
+    <span class="mod-badge b-yellow">Contact</span><span class="mod-chev">▾</span>
+  </div>
+  <div class="mod-body">
+    <div class="cta-block">
+      <div class="cta-title">Ready to make an <em>impact</em>?</div>
+      <p class="cta-sub">I'm actively looking for my next role in Dublin — Project Coordinator, Senior Onboarding, Implementation, Service Delivery, or QA Lead. Available in English and Spanish. Available now.</p>
+      <div class="cta-btns">
+        <a class="btn-p" href="mailto:Laura.moreno.limon@gmail.com">📩 Contact Me</a>
+        <a class="btn-s" href="https://www.linkedin.com/in/laura-moreno-limon" target="_blank">LinkedIn Profile</a>
+      </div>
+      <div class="contact-row">
+        <div class="ci">📍 Dublin, Ireland</div>
+        <div class="ci">📞 083 481 5700</div>
+        <div class="ci">✉️ Laura.moreno.limon@gmail.com</div>
+        <div class="ci">🇬🇧 English · 🇪🇸 Spanish</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /sections -->
+
+<div class="footer">
+  <div><strong>Laura Moreno</strong> — Project Delivery & Implementation</div>
+  <div>Built with Claude · Dublin, Ireland · 2026</div>
+</div>
+
+</div><!-- /content -->
+</div><!-- /layout -->
+
+<script>
+function tog(h){
+  h.parentElement.classList.toggle('open');
+  setTimeout(()=>{animateBars();animateBAChart();},100);
+}
+function goTo(id){
+  const el=document.getElementById(id);
+  if(el){el.scrollIntoView({behavior:'smooth',block:'start'});if(!el.classList.contains('open'))el.classList.add('open');}
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const nav=document.querySelector(`[data-s="${id}"]`);
+  if(nav)nav.classList.add('active');
+  setTimeout(()=>{animateBars();animateBAChart();},200);
+}
+function animateBars(){
+  document.querySelectorAll('.skill-bar-fill').forEach(b=>{
+    const w=b.getAttribute('data-width');
+    if(w&&b.style.width==='')b.style.width=w;
+  });
+}
+function animateBAChart(){
+  const maxVal=60;
+  document.querySelectorAll('.bac-row').forEach(row=>{
+    const before=parseInt(row.getAttribute('data-before'));
+    const after=parseInt(row.getAttribute('data-after'));
+    const bars=row.querySelectorAll('.bac-bar');
+    if(bars[0]&&bars[0].style.width==='0%'){
+      bars[0].style.width=(before/maxVal*100)+'%';
+      bars[1].style.width=Math.max((after/maxVal*100),3)+'%';
+    }
+  });
+}
+// Observe sections for auto-animation
+const obs=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting){animateBars();animateBAChart();}});
+},{threshold:0.2});
+['tools','ai'].forEach(id=>{const el=document.getElementById(id);if(el)obs.observe(el);});
+</script>
+</body>
+</html>
